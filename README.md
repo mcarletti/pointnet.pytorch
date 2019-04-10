@@ -34,10 +34,17 @@ cd pointnet.pytorch
 pip3 install -e .
 ```
 
+[optional] Download and build visualization tool
+```bash
+cd script
+bash build.sh # build C++ code for visualization
+bash download.sh # download dataset
+```
+
 ## Training
 
 Training classification and segmentation models.\
-**<span style="color:red">BUG</span>** Batch size must be at least 2.
+**BUG** Batch size must be at least 2.
 
 ```bash
 cd utils
@@ -46,13 +53,6 @@ python3 train_segmentation.py --dataset <dataset path> --nepoch=<number epochs>
 ```
 
 Use `--feature_transform` to use feature transform.
-
-<span style="color:orange">[optional]</span> Download and build visualization tool
-```bash
-cd script
-bash build.sh # build C++ code for visualization
-bash download.sh # download dataset
-```
 
 # Performance
 

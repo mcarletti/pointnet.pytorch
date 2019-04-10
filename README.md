@@ -34,7 +34,16 @@ cd pointnet.pytorch
 pip3 install -e .
 ```
 
-[optional] Download and build visualization tool
+Download dataset (subset of ShapeNet):
+
+```bash
+mkdir data
+cd data
+wget https://shapenet.cs.stanford.edu/ericyi/shapenetcore_partanno_segmentation_benchmark_v0.zip
+unzip shapenetcore_partanno_segmentation_benchmark_v0.zip
+```
+
+[ optional ] Download and build visualization tool
 ```bash
 cd script
 bash build.sh # build C++ code for visualization
@@ -53,6 +62,11 @@ python3 train_segmentation.py --dataset <dataset path> --nepoch=<number epochs>
 ```
 
 Use `--feature_transform` to use feature transform.
+
+Usage example:
+```bash
+python3 train_classification.py --dataset data/shapenetcore_partanno_segmentation_benchmark_v0 --nepoch 10 --batchSize 32 --dataset_type shapenet
+```
 
 # Performance
 

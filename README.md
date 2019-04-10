@@ -1,31 +1,58 @@
 # PointNet.pytorch
-This repo is implementation for PointNet(https://arxiv.org/abs/1612.00593) in pytorch. The model is in `pointnet/model.py`.
 
-It is tested with pytorch-1.0.
+This repo is implementation for PointNet(https://arxiv.org/abs/1612.00593) in pytorch.\
+The model is in `pointnet/model.py`.
 
-# Download data and running
+Code has been tested on the following machine:
 
-```
-git clone https://github.com/fxia22/pointnet.pytorch
+| HW        | Specs                                    |
+|-----------|------------------------------------------|
+| OS (type) | Ubuntu 18.04.2 LTS (64-bit)              |
+| Memory    | 62,8 GiB                                 |
+| Processor | Intel® Core™ i7-5930K CPU @ 3.50GHz × 12 |
+| Graphics  | GeForce GTX 1080/PCIe/SSE2               |
+
+| SW            | Version |
+|---------------|---------|
+| Python        | 3.6.7   |
+| Nvidia CUDA   | 10.0    |
+| Nvidia driver | 410.48  |
+
+| Python packages | Version     |
+|-----------------|-------------|
+| torch (PyTorch) | 1.0.1.post2 |
+| torchvision     | 0.2.1       |
+
+
+## Setup
+
+Download repository and install dependencies:
+
+```bash
+git clone https://github.com/mcarletti/pointnet.pytorch.git
 cd pointnet.pytorch
-pip install -e .
+pip3 install -e .
 ```
 
-Download and build visualization tool
-```
-cd script
-bash build.sh #build C++ code for visualization
-bash download.sh #download dataset
-```
+## Training
 
-Training 
-```
+Training classification and segmentation models.\
+**<span style="color:red">BUG</span>** Batch size must be at least 2.
+
+```bash
 cd utils
-python train_classification.py --dataset <dataset path> --nepoch=<number epochs> --dataset_type <modelnet40 | shapenet>
-python train_segmentation.py --dataset <dataset path> --nepoch=<number epochs> 
+python3 train_classification.py --dataset <dataset path> --nepoch=<number epochs> --dataset_type <modelnet40 | shapenet>
+python3 train_segmentation.py --dataset <dataset path> --nepoch=<number epochs> 
 ```
 
 Use `--feature_transform` to use feature transform.
+
+<span style="color:orange">[optional]</span> Download and build visualization tool
+```bash
+cd script
+bash build.sh # build C++ code for visualization
+bash download.sh # download dataset
+```
 
 # Performance
 

@@ -191,6 +191,97 @@ class ModelNetDataset(data.Dataset):
     def __len__(self):
         return len(self.fns)
 
+class ObjectNetDataset(data.Dataset):
+    """
+    """
+
+    def __init__(self,
+                 root,
+                 datafile,
+                 data_augmentation=False):
+        """
+        Initialize the dataset.
+        The file "root/datafile.txt" will be loaded.
+        It contains a list of pairs (filepath, target) where "filepath"
+        is the path of the image file to load and "target" is the
+        class index associated to that file.
+        In the folder "root/dsname" there is also a "label.txt" file
+        with the names of all the classes.
+
+        Parameters
+        ----------
+        root : string
+            Data folder containing the dataset
+        datafile : string
+            Portion of the data to consider; must be "data", "train", "valid" or "test"
+        """
+
+        if datafile not in ["data", "train", "valid", "test"]:
+            raise NotImplementedError()
+
+        data = np.loadtxt(os.path.join(root, datafile + ".txt"), dtype=str)
+
+        self.filenames = np.asarray([os.path.join(root, x) for x in data[:,0]])
+        self.targets = data[:,1].astype(np.int32)
+        self.nsamples = len(self.filenames)
+        self.classes = set(self.targets)
+        self.nclasses = len(self.classes)
+
+        self.data_augmentation = data_augmentation
+
+
+    def __getitem__(self, index):
+        """
+        Return a sample and its target values.
+
+        Parameters
+        ----------
+        index : integer
+            Position of the item to extract
+
+        Returns
+        -------
+        x : point cloud as pytorch tensor
+        y : class label as pytorch tensor
+        """
+
+        x = self.filenames[index]
+        y = self.targets[index]
+
+        point_set = np.loadtxt(x)
+
+        if self.data_augmentation:
+            theta = np.random.uniform(0,np.pi*2)
+            rotation_matrix = np.array([[np.cos(theta), -np.sin(theta)],[np.sin(theta), np.cos(theta)]])
+            point_set[:,[0,2]] = point_set[:,[0,2]].dot(rotation_matrix) # random rotation
+            point_set += np.random.normal(0, 0.02, size=point_set.shape) # random jitter
+
+        point_set = torch.from_numpy(point_set.astype(np.float32))
+        y = torch.from_numpy(np.asarray([y])).type(torch.LongTensor)
+
+        return point_set, y
+
+
+    def __len__(self):
+        """
+        Get the length of the dataset in terms of number of samples.
+
+        Returns
+        -------
+        nsamples : integer
+            Number of elements in the dataset
+        """
+        return self.nsamples
+
+
+    def shuffle(self):
+        """
+        In place random permutation of the dataset.
+        """
+        idx = np.random.permutation(self.nsamples)
+        self.filenames = self.filenames[idx]
+        self.targets = self.targets[idx]
+
 if __name__ == '__main__':
     dataset = sys.argv[1]
     datapath = sys.argv[2]

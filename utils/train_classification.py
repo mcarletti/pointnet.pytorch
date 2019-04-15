@@ -6,7 +6,7 @@ import torch
 import torch.nn.parallel
 import torch.optim as optim
 import torch.utils.data
-from pointnet.dataset import ShapeNetDataset, ModelNetDataset
+from pointnet.dataset import ShapeNetDataset, ModelNetDataset, ObjectNetDataset
 from pointnet.model import PointNetCls, feature_transform_reguliarzer
 import torch.nn.functional as F
 from tqdm import tqdm
@@ -60,6 +60,16 @@ elif opt.dataset_type == 'modelnet40':
         split='test',
         npoints=opt.num_points,
         data_augmentation=False)
+elif opt.dataset_type == 'plyweb':
+    dataset = ObjectNetDataset(
+        root=opt.dataset,
+        datafile="train",
+        data_augmentation=True)
+
+    test_dataset = ObjectNetDataset(
+        root=opt.dataset,
+        datafile="valid",
+        data_augmentation=True)
 else:
     exit('wrong dataset type')
 
@@ -99,6 +109,8 @@ num_batch = len(dataset) / opt.batchSize
 
 for epoch in range(opt.nepoch):
     scheduler.step()
+    if opt.dataset_type == 'plyweb':
+        dataset.shuffle()
     for i, data in enumerate(dataloader, 0):
         points, target = data
         target = target[:, 0]

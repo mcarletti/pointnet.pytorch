@@ -30,6 +30,9 @@ parser.add_argument('--feature_transform', action='store_true', help="use featur
 opt = parser.parse_args()
 print(opt)
 
+if opt.batchSize < 2:
+    raise ValueError("Batch size must be at least 2")
+
 blue = lambda x: '\033[94m' + x + '\033[0m'
 
 opt.manualSeed = random.randint(1, 10000)  # fix seed
@@ -72,7 +75,6 @@ elif opt.dataset_type == 'plyweb':
         data_augmentation=True)
 else:
     exit('wrong dataset type')
-
 
 dataloader = torch.utils.data.DataLoader(
     dataset,

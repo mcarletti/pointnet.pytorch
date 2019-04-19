@@ -250,11 +250,26 @@ class ObjectNetDataset(data.Dataset):
 
         point_set = np.loadtxt(x)
 
+        point_set = point_set - np.min(point_set,axis=0)
+        point_set = point_set / np.max(point_set)
+        point_set = 2 * point_set - 1
+
         if self.data_augmentation:
+            # random rotation
             theta = np.random.uniform(0,np.pi*2)
             rotation_matrix = np.array([[np.cos(theta), -np.sin(theta)],[np.sin(theta), np.cos(theta)]])
             point_set[:,[0,2]] = point_set[:,[0,2]].dot(rotation_matrix) # random rotation
             point_set += np.random.normal(0, 0.02, size=point_set.shape) # random jitter
+            # random "occlusion"
+            # ax = np.random.randint(3)
+            # m, M = np.min(point_set,axis=0)[ax], np.max(point_set,axis=0)[ax]
+            # thr = m + (M-m) * 0.3 * np.random.rand()
+            # ids = np.where(point_set[:,ax]>thr)[0]#[:300]
+            # point_set = point_set[ids]
+
+        point_set = point_set - np.min(point_set,axis=0)
+        point_set = point_set / np.max(point_set)
+        point_set = 2 * point_set - 1
 
         point_set = torch.from_numpy(point_set.astype(np.float32))
         y = torch.from_numpy(np.asarray([y])).type(torch.LongTensor)

@@ -65,8 +65,14 @@ Use `--feature_transform` to use feature transform.
 
 Usage example:
 ```bash
+# original pointnet training procedure
 python3 train_classification.py --dataset data/shapenetcore_partanno_segmentation_benchmark_v0 --nepoch 10 --batchSize 32 --dataset_type shapenet
+
+# example of custom usage
+python3 train_classification.py --dataset /media/Data/userdata/mcarletti/pointnet/pts/pointclouds/ --nepoch 10 --batchSize 32 --dataset_type plyweb
 ```
+
+In order to debug the code using `import pdb; pdb.set_trace()`, you must add the argument `--workers 0` to avoid using parallel computation.
 
 # Performance
 

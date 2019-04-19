@@ -81,9 +81,9 @@ def split_dataset(root, ext=None, shuffle=False, split=0.7):
     np.savetxt(os.path.join(root, "test.txt"), test, fmt="%s")
 
 if __name__ == "__main__":
-    
+
     root = "/media/Data/userdata/mcarletti/pointnet/pts"
-    filenames = sorted(glob.glob(os.path.join(root, "pts_fixed+augmented+vandal", "*.pts")))
+    filenames = sorted(glob.glob(os.path.join(root, "pts_fixed+augmented+vandal+linemod", "*.pts")))
 
     npts = 2500
     destfolder = os.path.join(root, "pointclouds")
@@ -108,4 +108,3 @@ if __name__ == "__main__":
             np.savetxt(os.path.join(out, "{:03d}.pts".format(n)), pts)
 
     split_dataset(destfolder, ".pts")
-

@@ -109,6 +109,10 @@ classifier.cuda()
 
 num_batch = len(dataset) / opt.batchSize
 
+history = {}
+history["train"] = []
+history["test"] = []
+
 for epoch in range(opt.nepoch):
     scheduler.step()
     if opt.dataset_type == 'plyweb':
@@ -131,6 +135,7 @@ for epoch in range(opt.nepoch):
         print('[%d: %d/%d] train loss: %f accuracy: %f' % (epoch, i, num_batch, loss.item(), correct.item() / float(opt.batchSize)))
 
         if i % 10 == 0:
+            history["train"].append( loss.item() )
             j, data = next(enumerate(testdataloader, 0))
             points, target = data
             target = target[:, 0]
@@ -142,6 +147,7 @@ for epoch in range(opt.nepoch):
             pred_choice = pred.data.max(1)[1]
             correct = pred_choice.eq(target.data).cpu().sum()
             print('[%d: %d/%d] %s loss: %f accuracy: %f' % (epoch, i, num_batch, blue('test'), loss.item(), correct.item()/float(opt.batchSize)))
+            history["test"].append( loss.item() )
 
     torch.save(classifier.state_dict(), '%s/cls_model_%d.pth' % (opt.outf, epoch))
 
@@ -160,3 +166,14 @@ for i,data in tqdm(enumerate(testdataloader, 0)):
     total_testset += points.size()[0]
 
 print("final accuracy {}".format(total_correct / float(total_testset)))
+
+import numpy as np
+import matplotlib.pyplot as plt
+plt.figure()
+plt.title("Loss")
+plt.grid(True)
+N = len(history["train"])
+xx = np.linspace(0, N-1, N)
+plt.plot(xx, history["train"], c="r")
+plt.plot(xx, history["test"], c="b")
+plt.show()

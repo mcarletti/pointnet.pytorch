@@ -250,9 +250,10 @@ class ObjectNetDataset(data.Dataset):
 
         point_set = np.loadtxt(x)
 
-        point_set = point_set - np.min(point_set,axis=0)
-        point_set = point_set / np.max(point_set)
-        point_set = 2 * point_set - 1
+        center = (np.max(point_set,axis=0) + np.min(point_set,axis=0)) / 2 # geometrical center
+        # center = np.mean(point_set, axis=0) # center of mass
+        point_set = point_set - center
+        point_set = point_set / np.max(np.abs(point_set))
 
         if self.data_augmentation:
             # random rotation
@@ -267,9 +268,10 @@ class ObjectNetDataset(data.Dataset):
             # ids = np.where(point_set[:,ax]>thr)[0]#[:300]
             # point_set = point_set[ids]
 
-        point_set = point_set - np.min(point_set,axis=0)
-        point_set = point_set / np.max(point_set)
-        point_set = 2 * point_set - 1
+        center = (np.max(point_set,axis=0) + np.min(point_set,axis=0)) / 2 # geometrical center
+        # center = np.mean(point_set, axis=0) # center of mass
+        point_set = point_set - center
+        point_set = point_set / np.max(np.abs(point_set))
 
         point_set = torch.from_numpy(point_set.astype(np.float32))
         y = torch.from_numpy(np.asarray([y])).type(torch.LongTensor)

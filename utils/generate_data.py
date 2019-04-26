@@ -83,25 +83,38 @@ def split_dataset(root, ext=None, shuffle=False, split=0.7):
 if __name__ == "__main__":
 
     root = "/media/Data/userdata/mcarletti/pointnet/pts"
-    filenames = sorted(glob.glob(os.path.join(root, "pts_fixed+augmented+vandal+linemod", "*.pts")))
+    filenames = sorted(glob.glob(os.path.join(root, "tmp/pts_fixed+augmented+vandal+linemod+partial", "*.pts")))
 
     npts = 2500
-    destfolder = os.path.join(root, "pointclouds")
+    destfolder = os.path.join(root, "pointclouds.partial")
     nptc = float("inf")
+    valid_fnames = []
 
-    for fn in filenames:
+    print("Preparing dataset (n.files: {})".format(len(filenames)))
+    for i,fn in enumerate(filenames):
+        if i % 100 == 0:
+            print("{:6.2f}".format(100 * (i+1) / len(filenames)), fn)
         data = np.loadtxt(fn)
         N = data.shape[0]
-        nptc = int(np.minimum((N // npts), nptc))
+        if N > 10000:
+            valid_fnames.append(fn)
+            nptc = int(np.minimum((N // npts), nptc))
+    
+    print("n.pts:", nptc)
+    assert nptc > 0
 
-    for fn in filenames:
+    filenames = valid_fnames
+
+    for i,fn in enumerate(filenames):
         data = np.loadtxt(fn)
         N = data.shape[0]
-        print(data.shape)
+        if i % 50 == 0:
+            print("{:6.2f}".format(100 * (i+1) / len(filenames)), data.shape, fn)
         for i in range(nptc):
             ids = np.random.choice(range(N), npts, False)
             pts = data[ids]
-            cn = os.path.basename(fn).split(".")[0][:-3]
+            # cn = os.path.basename(fn).split(".")[0][:-3]
+            cn = os.path.basename(fn).split("_")[0]
             out = os.path.join(destfolder, cn)
             os.makedirs(out, exist_ok=True)
             n = len(glob.glob(os.path.join(out, "*.pts")))
